@@ -194,15 +194,15 @@
   when: not native_libs_built.stat.exists
 
 - name: new native libs installed
-  shell: "chmod 777 -R {{ HADOOP_COMMON_HOME }}/lib/native/{{ item.name }} {{ HADOOP_COMMON_HOME }}/lib/native && chown {{ hadoop_common_user }}:{{ hadoop_common_group }} {{ item }} && cp {{ item }} {{ HADOOP_COMMON_HOME }}/lib/native/{{ item }}"
-  args:
-    chdir: "{{ hadoop_common_temporary_dir }}/hadoop-common-release-{{ HADOOP_COMMON_VERSION }}/hadoop-common-project/hadoop-common/target/native/target/usr/local/lib"
+  shell: >
+    chdir={{ hadoop_common_temporary_dir }}/hadoop-common-release-{{ HADOOP_COMMON_VERSION }}/hadoop-common-project/hadoop-common/target/native/target/usr/local/lib
+    chown {{ hadoop_common_user }}:{{ hadoop_common_group }} {{ item }} && cp {{ item }} {{ HADOOP_COMMON_HOME }}/lib/native/{{ item }}
   with_items:
     - libhadoop.a
     - libhadoop.so
     - libhadoop.so.1.0.0
   when: not native_libs_built.stat.exists
-
+  
 - name: native lib marker touched
   file:
     path: "{{ HADOOP_COMMON_USER_HOME }}/.native_libs_built"
